@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title>调试训练数据</title>
+  </head>
+  <body>
+    <h1>训练数据调试</h1>
+    <div id="output"></div>
+
+    <script>
+      function debugTrainingData() {
+        const output = document.getElementById('output')
+
+        // 检查localStorage中的数据
+        const trainingData = localStorage.getItem('trainingData')
+        const achievements = localStorage.getItem('achievements')
+
+        output.innerHTML = `
+                <h2>localStorage中的训练数据:</h2>
+                <pre>${trainingData || '无数据'}</pre>
+                
+                <h2>localStorage中的成就数据:</h2>
+                <pre>${achievements || '无数据'}</pre>
+                
+                <h2>解析后的训练数据:</h2>
+                <pre>${trainingData ? JSON.stringify(JSON.parse(trainingData), null, 2) : '无数据'}</pre>
+            `
+      }
+
+      // 页面加载后立即执行
+      debugTrainingData()
+
+      // 每2秒更新一次，以防数据有变化
+      setInterval(debugTrainingData, 2000)
+    </script>
+  </body>
+</html>

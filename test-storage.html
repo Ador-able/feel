@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>数据存储测试</title>
+  </head>
+  <body>
+    <h1>训练数据存储测试</h1>
+    <div id="results">
+      <p>正在检查localStorage...</p>
+    </div>
+
+    <script>
+      // 检查localStorage中的训练数据
+      function checkTrainingData() {
+        const resultsDiv = document.getElementById('results')
+
+        try {
+          const trainingData = localStorage.getItem('trainingData')
+          const achievementsData = localStorage.getItem('achievements')
+
+          let html = '<h2>LocalStorage 检查结果:</h2>'
+
+          if (trainingData) {
+            const sessions = JSON.parse(trainingData)
+            html += `<p><strong>训练记录:</strong> 找到 ${sessions.length} 条记录</p>`
+            html += '<ul>'
+            sessions.forEach((session, index) => {
+              html += `<li>${index + 1}. ${session.type} - 分数: ${session.score}, 准确率: ${session.accuracy}%, 日期: ${new Date(session.date).toLocaleString()}</li>`
+            })
+            html += '</ul>'
+          } else {
+            html += '<p><strong>训练记录:</strong> 未找到数据</p>'
+          }
+
+          if (achievementsData) {
+            const achievements = JSON.parse(achievementsData)
+            const earnedCount = achievements.filter((a) => a.earned).length
+            html += `<p><strong>成就数据:</strong> 找到 ${achievements.length} 个成就，已获得 ${earnedCount} 个</p>`
+          } else {
+            html += '<p><strong>成就数据:</strong> 未找到数据</p>'
+          }
+
+          // 添加一个测试按钮来模拟数据
+          html += '<br><button onclick="addTestData()">添加测试数据</button>'
+          html += '<button onclick="clearAllData()">清除所有数据</button>'
+          html += '<button onclick="checkTrainingData()">刷新检查</button>'
+
+          resultsDiv.innerHTML = html
+        } catch (error) {
+          resultsDiv.innerHTML = `<p style="color: red;">错误: ${error.message}</p>`
+        }
+      }
+
+      function addTestData() {
+        const testSession = {
+          id: Date.now().toString(),
+          type: 'proportion',
+          date: new Date().toISOString(),
+          score: 150,
+          accuracy: 75,
+          totalQuestions: 20,
+          correctAnswers: 15,
+          streak: 3,
+          duration: 300,
+        }
+
+        let sessions = []
+        const existingData = localStorage.getItem('trainingData')
+        if (existingData) {
+          sessions = JSON.parse(existingData)
+        }
+
+        sessions.push(testSession)
+        localStorage.setItem('trainingData', JSON.stringify(sessions))
+
+        alert('测试数据已添加')
+        checkTrainingData()
+      }
+
+      function clearAllData() {
+        if (confirm('确定要清除所有数据吗？')) {
+          localStorage.removeItem('trainingData')
+          localStorage.removeItem('achievements')
+          alert('数据已清除')
+          checkTrainingData()
+        }
+      }
+
+      // 页面加载时执行检查
+      window.onload = checkTrainingData
+    </script>
+  </body>
+</html>
